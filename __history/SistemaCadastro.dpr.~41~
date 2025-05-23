@@ -1,0 +1,133 @@
+program SistemaCadastro;
+
+{$APPTYPE CONSOLE}
+{$R *.res}
+
+uses
+  System.SysUtils, Vcl.Dialogs, System.Generics.Collections;
+
+type
+  TPessoa = class
+  private
+    FNome: string;
+    FIdade: Integer;
+
+    function GetIdade: Integer;
+    procedure SetIdade(const Value: Integer);
+
+  public
+    constructor Create(nome: string; idade: Integer);
+    procedure Falar;
+    procedure MostrarDados; virtual;
+    property nome: string read FNome write FNome;
+    property idade: Integer read GetIdade write SetIdade;
+  end;
+
+constructor TPessoa.Create(nome: string; idade: Integer);
+begin
+  FNome := nome;
+  FIdade := idade;
+end;
+
+procedure TPessoa.Falar;
+begin
+  Writeln(FNome, ' diz olá!');
+end;
+
+procedure TPessoa.MostrarDados;
+begin
+  Writeln('Nome: ', FNome);
+  Writeln('Idade: ', FIdade);
+end;
+
+procedure TPessoa.SetIdade(const Value: Integer);
+begin
+  if Value < 0 then
+  begin
+    Writeln('Idade invalida! Usando 0 como padrão!');
+    FIdade := 0
+  end
+  else
+    FIdade := Value;
+
+end;
+
+function TPessoa.GetIdade: Integer;
+begin
+  Result := FIdade
+end;
+
+type
+  TAluno = class(TPessoa)
+  private
+    FMatricula: string;
+    FCurso: string;
+  public
+    constructor Create(nome: string; idade: Integer; matricula, curso: string);
+    procedure Estudar;
+    procedure MostrarDados; override;
+    property matricula: string read FMatricula write FMatricula;
+    property curso: string read FCurso write FCurso;
+  end;
+
+constructor TAluno.Create(nome: string; idade: Integer; matricula: string;
+  curso: string);
+begin
+  inherited Create(nome, idade);
+  FMatricula := matricula;
+  FCurso := curso;
+end;
+
+procedure TAluno.Estudar;
+begin
+  Writeln(nome, ' está estudando o curso de: ', FCurso);
+end;
+
+procedure TAluno.MostrarDados;
+begin
+  inherited MostrarDados;
+  Writeln('Matricula: ', FMatricula);
+  Writeln('Curso: ', FCurso);
+end;
+
+var
+  nome, matricula, curso, entradaIdade: string;
+  idade: Integer;
+  aluno1: TAluno;
+
+begin
+
+  Write('Digite o nome do aluno: ');
+  Readln(nome);
+
+  Write('Digite a idade do aluno: ');
+  Readln(entradaIdade);
+
+  if not TryStrToInt(entradaIdade, idade) then
+  begin
+    Writeln('Idade invalida! Será definida como 0');
+    idade := 0;
+  end;
+
+  Write('Digite a matricula do aluno: ');
+  Readln(matricula);
+
+  Write('Digite o curso do aluno: ');
+  Readln(curso);
+
+  aluno1 := TAluno.Create(nome, idade, matricula, curso);
+
+  Writeln;
+
+  try
+    aluno1.Falar;
+    aluno1.MostrarDados;
+    aluno1.Estudar;
+  finally
+    aluno1.Free;
+  end;
+
+  ShowMessage('Durão');
+  Readln;
+
+end.
